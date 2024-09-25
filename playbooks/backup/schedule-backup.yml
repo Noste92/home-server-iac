@@ -1,0 +1,47 @@
+---
+- name: Schedule Backups
+  hosts: server
+  vars_files:
+    - ../../vars.yml
+  pre_tasks:
+    - name: Update apt cache if needed
+      become: true
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 3600
+  tasks:
+    - name: Include setup backups tasks
+      ansible.builtin.include_tasks: tasks/setup-backups.yml
+    - name: Create scripts directory
+      ansible.builtin.file:
+        path: /home/{{ user }}/scripts
+        state: directory
+        owner: '{{ user }}'
+        group: '{{ user }}'
+        mode: '0755'
+    - name: Copy backup scripts
+      ansible.builtin.copy:
+        src: '{{ item }}'
+        dest: /home/{{ user }}/scripts/
+        owner: '{{ user }}'
+        group: '{{ user }}'
+        mode: '0755'
+      with_fileglob:
+        - backup*
+    - name: Install cron
+      become: true
+      ansible.builtin.apt:
+        name: cron
+        state: present
+    - name: Schedule backup insite job
+      ansible.builtin.cron:
+        name: "Backup insite files"
+        minute: "0"
+        hour: "0"
+        job: "/home/{{ user }}/scripts/backup-insite.sh >> /home/{{ user }}/logs/backup-insite.logs 2>&1"
+    - name: Schedule backup offsite job
+      ansible.builtin.cron:
+        name: "Backup offsite files"
+        minute: "30"
+        hour: "2"
+        job: "/home/{{ user }}/scripts/backup-offsite.sh >> /home/{{ user }}/logs/backup-offsite.logs 2>&1"

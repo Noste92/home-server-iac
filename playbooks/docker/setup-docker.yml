@@ -1,0 +1,41 @@
+---
+- name: Setup Docker
+  hosts: server
+  become: true
+  handlers:
+    - name: Reboot required
+      ansible.builtin.reboot:
+  vars_files:
+    - ../../vars.yml
+  pre_tasks:
+    - name: Update apt cache if needed
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 3600
+  tasks:
+    - name: Add Docker GPG apt Key
+      ansible.builtin.apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+    - name: Add Docker Repository
+      ansible.builtin.apt_repository:
+        repo: deb https://download.docker.com/linux/ubuntu focal stable
+        state: present
+    - name: Install docker-ce
+      ansible.builtin.apt:
+        name: docker-ce
+        state: present
+    - name: Add the docker group to default user
+      ansible.builtin.user:
+        name: "{{ user }}"
+        append: true
+        groups: ["docker"]
+      notify: Reboot required
+    - name: Check if docker is running
+      ansible.builtin.service:
+        name: docker
+        state: started
+        enabled: true
+    - name: Create a network for Reverse proxy comunication
+      community.docker.docker_network:
+        name: reverse_proxy_network

@@ -1,0 +1,18 @@
+services:
+  homer:
+    image: b4bz/homer
+    restart: on-failure
+    volumes:
+      - ./assets:/www/assets
+    labels:
+      - "traefik.http.routers.homer.rule=Host(`home-server.noste.xyz`)"
+      - "traefik.http.routers.homer.entrypoints=websecure"
+      - "traefik.http.routers.homer.tls=true"
+      - "traefik.http.routers.homer.tls.certresolver=defaultresolver"
+      - "traefik.http.routers.homer.middlewares=oauth"
+    networks:
+      - public_network
+networks:
+  public_network:
+    name: reverse_proxy_network
+    external: true

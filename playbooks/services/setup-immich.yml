@@ -1,0 +1,26 @@
+---
+- name: Setup Immich
+  hosts: server
+  vars_files:
+    - ../../vars.yml
+  vars:
+    service_name: immich
+  tasks:
+    - name: Include setup docker compose folders tasks
+      ansible.builtin.include_tasks: tasks/setup-docker-compose-folders.yml
+    - name: Create library directory
+      ansible.builtin.file:
+        path: /home/{{ user }}/{{ service_name }}/library
+        state: directory
+        owner: '{{ user }}'
+        group: '{{ user }}'
+        mode: '0755'
+    - name: Create postgres directory
+      ansible.builtin.file:
+        path: /home/{{ user }}/{{ service_name }}/postgres
+        state: directory
+        owner: '{{ user }}'
+        group: '{{ user }}'
+        mode: '0755'
+    - name: Include start docker compose services tasks
+      ansible.builtin.include_tasks: tasks/start-docker-compose.yml

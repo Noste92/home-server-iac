@@ -1,0 +1,60 @@
+services:
+  traefik:
+    image: traefik:v3.1
+    restart: on-failure
+    command:
+      - --api.insecure=true
+      - --providers.docker
+      - --entryPoints.web.address=:80
+      - --entrypoints.web.http.redirections.entrypoint.to=websecure
+      - --entryPoints.web.http.redirections.entrypoint.scheme=https
+      - --entryPoints.websecure.address=:443
+      - --entrypoints.websecure.asDefault=true
+      - --certificatesresolvers.defaultresolver.acme.email=mode.stefa@gmail.com
+      - --certificatesresolvers.defaultresolver.acme.storage=acme.json
+      - --certificatesresolvers.defaultresolver.acme.httpchallenge.entrypoint=web
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    labels:
+      - "traefik.http.routers.traefik.rule=Host(`traefik.noste.xyz`)"
+      - "traefik.http.routers.traefik.entrypoints=websecure"
+      - "traefik.http.routers.traefik.tls=true"
+      - "traefik.http.routers.traefik.tls.certresolver=defaultresolver"
+      - "traefik.http.services.traefik.loadbalancer.server.port=8080"
+      - "traefik.http.routers.traefik.middlewares=oauth"
+    networks:
+      - public_network
+      - private_network
+  oauth:
+    restart: on-failure
+    image: thomseddon/traefik-forward-auth:2
+    environment:
+      - PROVIDERS_GOOGLE_CLIENT_ID=${PROVIDERS_GOOGLE_CLIENT_ID}
+      - PROVIDERS_GOOGLE_CLIENT_SECRET=${PROVIDERS_GOOGLE_CLIENT_SECRET}
+      - SECRET=${SECRET_OAUTH}
+      - COOKIE_DOMAIN=noste.xyz
+      - AUTH_HOST=oauth.noste.xyz
+      - WHITELIST=${USERS_WHITELIST}
+    labels:
+      - "traefik.http.routers.oauth.rule=Host(`oauth.noste.xyz`)"
+      - "traefik.http.routers.oauth.entrypoints=websecure"
+      - "traefik.http.routers.oauth.tls=true"
+      - "traefik.http.routers.oauth.tls.certresolver=defaultresolver"
+      - "traefik.http.services.oauth.loadbalancer.server.port=4181"
+      - "traefik.http.middlewares.oauth.forwardauth.address=http://oauth:4181"
+      - "traefik.http.middlewares.oauth.forwardauth.tls.insecureSkipVerify=true"
+      - "traefik.http.middlewares.oauth.forwardauth.authResponseHeaders=X-Forwarded-User"
+      - "traefik.http.middlewares.oauth.forwardauth.trustForwardHeader=true"
+      - "traefik.http.routers.oauth.middlewares=oauth"
+    networks:
+      - private_network
+networks:
+  public_network:
+    name: reverse_proxy_network
+    external: true
+  private_network:
+    driver: bridge

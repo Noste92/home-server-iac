@@ -1,0 +1,63 @@
+---
+- name: Setup Homer
+  hosts: server
+  vars_files:
+    - ../../vars.yml
+  vars:
+    service_name: homer
+  tasks:
+    - name: Include setup docker compose folders tasks
+      ansible.builtin.include_tasks: tasks/setup-docker-compose-folders.yml
+    - name: Create assets directory
+      ansible.builtin.file:
+        path: /home/{{ user }}/{{ service_name }}/assets
+        state: directory
+        owner: '{{ user }}'
+        group: '{{ user }}'
+        mode: '0755'
+    - name: Create images directory
+      ansible.builtin.file:
+        path: /home/{{ user }}/{{ service_name }}/assets/images
+        state: directory
+        owner: '{{ user }}'
+        group: '{{ user }}'
+        mode: '0755'
+    - name: Create icons directory
+      ansible.builtin.file:
+        path: /home/{{ user }}/{{ service_name }}/assets/icons
+        state: directory
+        owner: '{{ user }}'
+        group: '{{ user }}'
+        mode: '0755'
+    - name: Copy assets files
+      ansible.builtin.copy:
+        src: "{{ item }}"
+        dest: /home/{{ user }}/{{ service_name }}/assets
+        owner: '{{ user }}'
+        group: '{{ user }}'
+        mode: '0644'
+      with_fileglob:
+        - docker-compose/{{ service_name }}/assets/.*
+        - docker-compose/{{ service_name }}/assets/*
+    - name: Copy images files
+      ansible.builtin.copy:
+        src: "{{ item }}"
+        dest: /home/{{ user }}/{{ service_name }}/assets/images
+        owner: '{{ user }}'
+        group: '{{ user }}'
+        mode: '0644'
+      with_fileglob:
+        - docker-compose/{{ service_name }}/assets/images/.*
+        - docker-compose/{{ service_name }}/assets/images/*
+    - name: Copy icons files
+      ansible.builtin.copy:
+        src: "{{ item }}"
+        dest: /home/{{ user }}/{{ service_name }}/assets/icons
+        owner: '{{ user }}'
+        group: '{{ user }}'
+        mode: '0644'
+      with_fileglob:
+        - docker-compose/{{ service_name }}/assets/icons/.*
+        - docker-compose/{{ service_name }}/assets/icons/*
+    - name: Include start docker compose services tasks
+      ansible.builtin.include_tasks: tasks/start-docker-compose.yml

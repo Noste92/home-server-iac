@@ -1,0 +1,17 @@
+---
+- name: Import Setup Docker
+  ansible.builtin.import_playbook: playbooks/docker/setup-docker.yml
+- name: Import OS Configs
+  ansible.builtin.import_playbook: playbooks/os-configs/os-configs.yml
+- name: Import Setup Traefik
+  ansible.builtin.import_playbook: playbooks/services/setup-traefik.yml
+- name: Import Setup Homer
+  ansible.builtin.import_playbook: playbooks/services/setup-homer.yml
+- name: Import Setup Immich
+  ansible.builtin.import_playbook: playbooks/services/setup-immich.yml
+- name: Import Netdata
+  ansible.builtin.import_playbook: playbooks/services/setup-netdata.yml
+- name: Import Schedule Backups
+  ansible.builtin.import_playbook: playbooks/backup/schedule-backup.yml
+# - name: Import Restore Backup Script # Sono da lanciare a mano
+#   ansible.builtin.import_playbook: playbooks/backup/restore-backup.yml

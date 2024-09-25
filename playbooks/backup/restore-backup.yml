@@ -1,0 +1,33 @@
+---
+- name: Restore Backup
+  hosts: server
+  vars_files:
+    - ../../vars.yml
+  pre_tasks:
+    - name: Update apt cache if needed
+      become: true
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 3600
+  tasks:
+    - name: Include setup backups tasks
+      ansible.builtin.include_tasks: tasks/setup-backups.yml
+    - name: Copy restore scripts
+      ansible.builtin.copy:
+        src: restore-backup.sh
+        dest: /home/{{ user }}/scripts/
+        owner: '{{ user }}'
+        group: '{{ user }}'
+        mode: '0755'
+      with_fileglob:
+        - restore*sh
+    # PER ADESSO LO SI FA A MANO :D
+    # - name: Restore backup
+    #   ansible.builtin.shell: sh /home/{{ user }}/scripts/restore-backup.sh > /home/noste/logs/restore-offsite.logs 2>&1
+    # - name: Remove restore scripts
+    #   ansible.builtin.file:
+    #     state: absent
+    #     path: /home/{{ user }}/scripts/restore-backup.sh
+    #     owner: '{{ user }}'
+    #     group: '{{ user }}'
+    #     mode: '0755'

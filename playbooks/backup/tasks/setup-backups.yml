@@ -1,0 +1,58 @@
+---
+- name: Install SMB to mount external drive
+  become: true
+  ansible.builtin.apt:
+    name: cifs-utils
+    state: present
+- name: Create share SMB mount directory
+  ansible.builtin.file:
+    path: /home/{{ user }}/network-drive
+    state: directory
+    owner: '{{ user }}'
+    group: '{{ user }}'
+    mode: '0755'
+- name: Mount SMB volume
+  become: true
+  ansible.posix.mount:
+    src: //192.168.1.100/dietpi
+    path: /home/{{ user }}/network-drive
+    # TODO: parametrizzare gid e uid ce ne sono altri
+    opts: "uid=1000,gid=1000,username={{ user }},password=no_password" # The NAS is public in my internal network
+    fstype: cifs
+    state: mounted
+- name: Install Rclone for offsite external drive
+  become: true
+  ansible.builtin.apt:
+    name: rclone
+    state: present
+- name: Create Rclone config directory
+  ansible.builtin.file:
+    path: /home/{{ user }}/.config/rclone
+    state: directory
+    owner: '{{ user }}'
+    group: '{{ user }}'
+    mode: '0755'
+- name: Copy Rclone config file
+  ansible.builtin.copy:
+    force: false
+    src: rclone.conf
+    dest: /home/{{ user }}/.config/rclone/rclone.conf
+    owner: '{{ user }}'
+    group: '{{ user }}'
+    mode: '0644'
+- name: Install borg
+  become: true
+  ansible.builtin.apt:
+    name: borgbackup
+    state: present
+- name: Init Borg Repo
+  ansible.builtin.command:
+    cmd: borg init -e none /home/{{ user }}/network-drive/{{ backup_directory }}
+    creates: /home/{{ user }}/network-drive/{{ backup_directory }}/config
+- name: Create logs directory
+  ansible.builtin.file:
+    path: /home/{{ user }}/logs
+    state: directory
+    owner: '{{ user }}'
+    group: '{{ user }}'
+    mode: '0755'

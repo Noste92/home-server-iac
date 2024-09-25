@@ -1,0 +1,52 @@
+---
+- name: Setup dotfiles and user settings
+  hosts: server
+  vars_files:
+    - ../../vars.yml
+  pre_tasks:
+    - name: Update apt cache if needed
+      become: true
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 3600
+  handlers:
+    - name: Restart logind service
+      become: true
+      ansible.builtin.service:
+        name: systemd-logind
+        state: restarted
+  tasks:
+    - name: Install htop
+      become: true
+      ansible.builtin.apt:
+        name: htop
+        state: present
+    - name: Install vim
+      become: true
+      ansible.builtin.apt:
+        name: vim
+        state: present
+    - name: Install my terminfo
+      become: true
+      ansible.builtin.apt:
+        name: kitty-terminfo
+        state: present
+    - name: Install neofetch
+      become: true
+      ansible.builtin.apt:
+        name: neofetch
+        state: present
+    - name: Add neofetch to bashrc
+      ansible.builtin.lineinfile:
+        path: /home/{{ user }}/.bashrc
+        line: clear && neofetch
+    - name: Add scripts to PATH
+      ansible.builtin.lineinfile:
+        path: /home/{{ user }}/.bashrc
+        line: export PATH=$HOME/scripts:$PATH
+    - name: Avoid lid close suspend
+      become: true
+      ansible.builtin.lineinfile:
+        path: /etc/systemd/logind.conf
+        line: HandleLidSwitch=ignore
+      notify: Restart logind service

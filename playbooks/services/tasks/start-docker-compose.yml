@@ -1,0 +1,4 @@
+---
+- name: Create and start service
+  community.docker.docker_compose_v2:
+    project_src: /home/{{ user }}/{{ service_name }}

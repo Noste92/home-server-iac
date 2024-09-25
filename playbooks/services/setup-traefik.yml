@@ -1,0 +1,12 @@
+---
+- name: Setup Traefik
+  hosts: server
+  vars_files:
+    - ../../vars.yml
+  vars:
+    service_name: traefik
+  tasks:
+    - name: Include setup docker compose folders tasks
+      ansible.builtin.include_tasks: tasks/setup-docker-compose-folders.yml
+    - name: Include start docker compose services tasks
+      ansible.builtin.include_tasks: tasks/start-docker-compose.yml
