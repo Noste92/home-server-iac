@@ -3,7 +3,7 @@
 BOT_TOKEN=
 
 # Setting this, so the repo does not need to be given on the commandline:
-export BORG_REPO=/home/noste/network-drive/BorgRepo # TODO: sarebbe da parametrizzare
+export BORG_REPO=/home/noste/backup-drive/BorgRepo # TODO: sarebbe da parametrizzare
 
 # See the section "Passphrase notes" for more infos.
 # export BORG_PASSPHRASE='XYZl0ngandsecurepa_55_phrasea&&123' non necessaria
@@ -31,7 +31,7 @@ borg create                         \
     --compression lz4               \
     ::'{hostname}-{now:%Y-%m-%d}'            \
     /home/noste/traefik/acme.backup.json \
-    /home/noste/immich/library/upload/ \
+    /home/noste/immich/library/library/ \
     /home/noste/immich/library/upload/ \
     /home/noste/immich/dump.sql.gz \
 

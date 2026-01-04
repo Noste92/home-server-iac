@@ -39,7 +39,7 @@
     - name: Add neofetch to bashrc
       ansible.builtin.lineinfile:
         path: /home/{{ user }}/.bashrc
-        line: clear && neofetch
+        line: neofetch
     - name: Add scripts to PATH
       ansible.builtin.lineinfile:
         path: /home/{{ user }}/.bashrc

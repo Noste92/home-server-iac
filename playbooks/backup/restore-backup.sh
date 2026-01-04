@@ -7,7 +7,7 @@
 #     echo rclone mount offsite_drive:/ offsite-drive/ &
 # fi
 
-borg extract --list /home/noste/network-drive/BorgRepo::CHANGE_ME 
+borg extract --list /home/noste/backup-drive/BorgRepo::CHANGE_ME 
 
 ### Traefik ACME restore
 docker cp /home/noste/traefik/acme.backup.json traefik-traefik-1:/acme.json
