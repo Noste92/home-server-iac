@@ -13,5 +13,5 @@
   ansible.builtin.import_playbook: playbooks/services/setup-netdata.yml
 - name: Import Schedule Backups
   ansible.builtin.import_playbook: playbooks/backup/schedule-backup.yml
-# - name: Import Restore Backup Script # Sono da lanciare a mano
-#   ansible.builtin.import_playbook: playbooks/backup/restore-backup.yml
+- name: Import Restore Backup Script # Sono da lanciare a mano
+  ansible.builtin.import_playbook: playbooks/backup/restore-backup.yml
