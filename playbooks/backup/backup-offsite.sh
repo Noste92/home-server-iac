@@ -18,4 +18,4 @@ info ${MESSAGE}
 curl -X POST \
      -H 'Content-Type: application/json' \
      -d "{\"chat_id\": \"-4520644600\", \"text\": \"${MESSAGE}\"}" \
-     https://api.telegram.org/${BOT_TOKEN}/sendMessage
+     https://api.telegram.org/bot${BOT_TOKEN}/sendMessage
