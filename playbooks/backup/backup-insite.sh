@@ -31,8 +31,7 @@ borg create                         \
     --compression lz4               \
     ::'{hostname}-{now:%Y-%m-%d}'            \
     /home/noste/traefik/acme.backup.json \
-    /home/noste/immich/library/library/ \
-    /home/noste/immich/library/upload/ \
+    /home/noste/immich/library/ \
     /home/noste/immich/dump.sql.gz \
 
 backup_exit=$?
