@@ -1,0 +1,33 @@
+---
+- name: Setup Radarr
+  hosts: server
+  vars_files:
+    - ../../vars.yml
+  vars:
+    service_name: radarr
+  tasks:
+    - name: Include setup docker compose folders tasks
+      ansible.builtin.include_tasks: tasks/setup-docker-compose-folders.yml
+    - name: Create config directory
+      ansible.builtin.file:
+        path: /home/{{ user }}/{{ service_name }}/config
+        state: directory
+        owner: '{{ user }}'
+        group: '{{ user }}'
+        mode: '0755'
+    - name: Create movies directory
+      ansible.builtin.file:
+        path: /home/{{ user }}/{{ service_name }}/movies
+        state: directory
+        owner: '{{ user }}'
+        group: '{{ user }}'
+        mode: '0755'
+    - name: Create downloads directory
+      ansible.builtin.file:
+        path: /home/{{ user }}/{{ service_name }}/downloads
+        state: directory
+        owner: '{{ user }}'
+        group: '{{ user }}'
+        mode: '0755'
+    - name: Include start docker compose services tasks
+      ansible.builtin.include_tasks: tasks/start-docker-compose.yml

@@ -1,0 +1,27 @@
+---
+services:
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
+    restart: unless-stopped
+    labels:
+      - "traefik.http.routers.radarr.rule=Host(`radarr.noste.xyz`)"
+      - "traefik.http.routers.radarr.entrypoints=websecure"
+      - "traefik.http.routers.radarr.tls=true"
+      - "traefik.http.routers.radarr.tls.certresolver=defaultresolver"
+      - "traefik.http.routers.radarr.middlewares=oauth"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Rome
+    volumes:
+      - /home/noste/radarr/config:/config
+      - /home/noste/radarr/movies:/movies
+      - /home/noste/deluge/downloads:/downloads
+    networks:
+      - public_network
+
+networks:
+  public_network:
+    name: reverse_proxy_network
+    external: true
