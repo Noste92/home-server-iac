@@ -33,10 +33,12 @@ borg create                         \
     /home/noste/traefik/acme.backup.json \
     /home/noste/immich/library/ \
     /home/noste/immich/dump.sql.gz \
-    /home/noste/sonarr/ \
-    /home/noste/deluge/ \
-    /home/noste/prowlarr/ \
-    /home/noste/radarr/ \
+    /home/noste/sonarr/config \
+    /home/noste/deluge/config \
+    /home/noste/prowlarr/config \
+    /home/noste/prowlarr/config-flaresolverr \
+    /home/noste/radarr/config \
+    /home/noste/jellyfin/config \
 
 backup_exit=$?
 
