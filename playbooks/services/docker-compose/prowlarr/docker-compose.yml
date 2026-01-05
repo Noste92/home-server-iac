@@ -1,0 +1,40 @@
+---
+services:
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    restart: unless-stopped
+    labels:
+      - "traefik.http.routers.prowlarr.rule=Host(`prowlarr.noste.xyz`)"
+      - "traefik.http.routers.prowlarr.entrypoints=websecure"
+      - "traefik.http.routers.prowlarr.tls=true"
+      - "traefik.http.routers.prowlarr.tls.certresolver=defaultresolver"
+      - "traefik.http.routers.prowlarr.middlewares=oauth"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Rome
+    volumes:
+      - /home/noste/prowlarr/config:/config
+    networks:
+      - public_network
+  flaresolverr:
+    # DockerHub mirror flaresolverr/flaresolverr:latest
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    container_name: flaresolverr
+    environment:
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - LOG_FILE=${LOG_FILE:-none}
+      - LOG_HTML=${LOG_HTML:-false}
+      - CAPTCHA_SOLVER=${CAPTCHA_SOLVER:-none}
+      - TZ=Europe/Rome
+    volumes:
+      - /home/noste/prowlarr/config-flaresolverr:/config
+    restart: unless-stopped
+    networks:
+      - public_network
+
+networks:
+  public_network:
+    name: reverse_proxy_network
+    external: true

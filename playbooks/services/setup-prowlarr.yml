@@ -1,0 +1,26 @@
+---
+- name: Setup Prowlarr
+  hosts: server
+  vars_files:
+    - ../../vars.yml
+  vars:
+    service_name: prowlarr
+  tasks:
+    - name: Include setup docker compose folders tasks
+      ansible.builtin.include_tasks: tasks/setup-docker-compose-folders.yml
+    - name: Create config directory
+      ansible.builtin.file:
+        path: /home/{{ user }}/{{ service_name }}/config
+        state: directory
+        owner: '{{ user }}'
+        group: '{{ user }}'
+        mode: '0755'
+    - name: Create config-flaresolverr directory
+      ansible.builtin.file:
+        path: /home/{{ user }}/{{ service_name }}/config-flaresolverr
+        state: directory
+        owner: '{{ user }}'
+        group: '{{ user }}'
+        mode: '0755'
+    - name: Include start docker compose services tasks
+      ansible.builtin.include_tasks: tasks/start-docker-compose.yml
