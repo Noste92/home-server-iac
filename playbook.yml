@@ -19,6 +19,8 @@
   ansible.builtin.import_playbook: playbooks/services/setup-sonarr.yml
 - name: Import Radarr
   ansible.builtin.import_playbook: playbooks/services/setup-radarr.yml
+- name: Import Jellyfin
+  ansible.builtin.import_playbook: playbooks/services/setup-jellyfin.yml
 - name: Import Schedule Backups
   ansible.builtin.import_playbook: playbooks/backup/schedule-backup.yml
 - name: Import Restore Backup Script # Sono da lanciare a mano
