@@ -11,6 +11,14 @@
   ansible.builtin.import_playbook: playbooks/services/setup-immich.yml
 - name: Import Netdata
   ansible.builtin.import_playbook: playbooks/services/setup-netdata.yml
+- name: Import Deluge
+  ansible.builtin.import_playbook: playbooks/services/setup-deluge.yml
+- name: Import Prowlarr
+  ansible.builtin.import_playbook: playbooks/services/setup-prowlarr.yml
+- name: Import Sonarr
+  ansible.builtin.import_playbook: playbooks/services/setup-sonarr.yml
+- name: Import Radarr
+  ansible.builtin.import_playbook: playbooks/services/setup-radarr.yml
 - name: Import Schedule Backups
   ansible.builtin.import_playbook: playbooks/backup/schedule-backup.yml
 - name: Import Restore Backup Script # Sono da lanciare a mano
