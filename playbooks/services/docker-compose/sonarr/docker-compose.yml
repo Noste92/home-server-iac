@@ -1,0 +1,26 @@
+services:
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    restart: unless-stopped
+    labels:
+      - "traefik.http.routers.sonarr.rule=Host(`sonarr.noste.xyz`)"
+      - "traefik.http.routers.sonarr.entrypoints=websecure"
+      - "traefik.http.routers.sonarr.tls=true"
+      - "traefik.http.routers.sonarr.tls.certresolver=defaultresolver"
+      - "traefik.http.routers.sonarr.middlewares=oauth"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Rome
+    volumes:
+      - /home/noste/sonarr/config:/config
+      - /home/noste/sonarr/tv:/tv
+      - /home/noste/deluge/downloads:/downloads
+    networks:
+      - public_network
+
+networks:
+  public_network:
+    name: reverse_proxy_network
+    external: true
